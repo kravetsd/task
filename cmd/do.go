@@ -10,7 +10,8 @@ var doCmd = &cobra.Command{
 	Use:   "do",
 	Short: "do a task",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("do a task")
+		task := args[0]
+		fmt.Printf("you have completted task \"%v\" \n", task)
 	},
 }
 
