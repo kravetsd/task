@@ -24,6 +24,14 @@ func init() {
 	// To make a "help" flag to be hidden from the help menu we need to define it first
 	rootCmd.PersistentFlags().BoolP("help", "h", false, "help for task")
 	rootCmd.PersistentFlags().Lookup("help").Hidden = true
+	// disabling "help" command from the help menu
+	rootCmd.SetHelpCommand(&cobra.Command{
+		Use:    "no-help",
+		Hidden: true,
+	})
+
+	// Disabling "completion" command from the help menu
+	rootCmd.CompletionOptions.DisableDefaultCmd = true
 }
 
 func Execute() {
