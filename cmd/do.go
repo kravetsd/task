@@ -13,3 +13,7 @@ var doCmd = &cobra.Command{
 		fmt.Println("do a task")
 	},
 }
+
+func init() {
+	rootCmd.AddCommand(doCmd)
+}

@@ -16,6 +16,14 @@ var rootCmd = &cobra.Command{
 			cmd.Help()
 		}
 	},
+	DisableFlagsInUseLine: true,
+}
+
+func init() {
+
+	// To make a "help" flag to be hidden from the help menu we need to define it first
+	rootCmd.PersistentFlags().BoolP("help", "h", false, "help for task")
+	rootCmd.PersistentFlags().Lookup("help").Hidden = true
 }
 
 func Execute() {
