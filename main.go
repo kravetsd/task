@@ -1,45 +1,23 @@
 package main
 
 import (
-	"fmt"
 	"log"
-	"sync"
 
 	"github.com/boltdb/bolt"
+	"github.com/kravetsd/task/cmd"
+	"github.com/kravetsd/task/internal"
 )
-
-var (
-	db   *bolt.DB
-	once sync.Once
-)
-
-func GetDb() (*bolt.DB, error) {
-	once.Do(func() {
-		var err error
-		db, err = bolt.Open("my.db", 0600, nil)
-		if err != nil {
-			log.Fatal(err)
-		}
-		db.Update(func(tx *bolt.Tx) error {
-			_, err := tx.CreateBucketIfNotExists([]byte("Tasks"))
-			if err != nil {
-				return fmt.Errorf("create bucket: %s", err)
-			}
-			return nil
-		})
-	})
-	return db, nil
-}
 
 func main() {
 
 	// Example update read-write transaction
-	db, err := GetDb()
+	DataBase, err := internal.GetDb()
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer DataBase.Close()
 
-	db.Update(func(tx *bolt.Tx) error {
+	DataBase.Update(func(tx *bolt.Tx) error {
 		b, err := tx.CreateBucketIfNotExists([]byte("Tasks"))
 		if err != nil {
 			return err
@@ -48,23 +26,21 @@ func main() {
 	})
 
 	// Example reading transaction from the bucket
-	db.View(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte("Tasks"))
-		v := b.Get([]byte("1"))
-		fmt.Println(string(v))
-		return nil
-	})
+	// DataBase.View(func(tx *bolt.Tx) error {
+	// 	b := tx.Bucket([]byte("Tasks"))
+	// 	v := b.Get([]byte("1"))
+	// 	fmt.Println(string(v))
+	// 	return nil
+	// })
 
-	db.View(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte("Tasks"))
-		b.ForEach(func(k, v []byte) error {
-			fmt.Printf("key=%s, value=%s", k, v)
-			return nil
-		})
-		return nil
-	})
-
-	db.Close()
-	//cmd.Execute()
+	// DataBase.View(func(tx *bolt.Tx) error {
+	// 	b := tx.Bucket([]byte("Tasks"))
+	// 	b.ForEach(func(k, v []byte) error {
+	// 		fmt.Printf("key=%s, value=%s", k, v)
+	// 		return nil
+	// 	})
+	// 	return nil
+	// })
+	cmd.Execute()
 
 }
