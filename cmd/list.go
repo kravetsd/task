@@ -32,7 +32,7 @@ func listTasks(tx *bolt.Tx) error {
 	return nil
 }
 
-// btoi returns an int big endian representation of v.
+// btoi returns an int representation of byte.
 func btoi(b []byte) uint64 {
 	u := binary.BigEndian.Uint64(b)
 	return u
