@@ -3,7 +3,6 @@ package main
 import (
 	"log"
 
-	"github.com/boltdb/bolt"
 	"github.com/kravetsd/task/cmd"
 	"github.com/kravetsd/task/internal"
 )
@@ -16,14 +15,6 @@ func main() {
 		log.Fatal(err)
 	}
 	defer DataBase.Close()
-
-	DataBase.Update(func(tx *bolt.Tx) error {
-		b, err := tx.CreateBucketIfNotExists([]byte("Tasks"))
-		if err != nil {
-			return err
-		}
-		return b.Put([]byte("1"), []byte("Task 1"))
-	})
 
 	// Example reading transaction from the bucket
 	// DataBase.View(func(tx *bolt.Tx) error {

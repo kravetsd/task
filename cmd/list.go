@@ -30,7 +30,7 @@ func listTasks(tx *bolt.Tx) error {
 		return nil
 	})
 	for i, t := range tasks {
-		fmt.Printf("%d. %v", i+1, t)
+		fmt.Printf("%d. %v\n", i+1, t)
 	}
 	return nil
 }
