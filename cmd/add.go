@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"encoding/binary"
 	"fmt"
 	"strings"
 
@@ -20,11 +21,22 @@ var addCmd = &cobra.Command{
 		task := strings.Join(args, " ")
 		fmt.Printf("Added \"%v\" into your list\n", task)
 		internal.Db.Update(func(tx *bolt.Tx) error {
-			b, err := tx.CreateBucketIfNotExists([]byte("Tasks"))
+			b, err := tx.CreateBucketIfNotExists([]byte(internal.BUCKETNAME))
 			if err != nil {
 				return err
 			}
-			return b.Put([]byte(task), []byte(task))
+			id, err := b.NextSequence()
+			if err != nil {
+				return err
+			}
+			return b.Put(itob(int(id)), []byte(task))
 		})
 	},
+}
+
+// itob returns an 8-byte big endian representation of v.
+func itob(v int) []byte {
+	b := make([]byte, 8)
+	binary.BigEndian.PutUint64(b, uint64(v))
+	return b
 }

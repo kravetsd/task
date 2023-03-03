@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"encoding/binary"
 	"fmt"
 
 	"github.com/boltdb/bolt"
@@ -23,14 +24,16 @@ func runListTasks(cmd *cobra.Command, args []string) {
 }
 
 func listTasks(tx *bolt.Tx) error {
-	var tasks []string
 	b := tx.Bucket([]byte(internal.BUCKETNAME))
 	b.ForEach(func(k, v []byte) error {
-		tasks = append(tasks, string(v))
+		fmt.Printf("%v. %v\n", btoi(k), string(v))
 		return nil
 	})
-	for i, t := range tasks {
-		fmt.Printf("%d. %v\n", i+1, t)
-	}
 	return nil
+}
+
+// btoi returns an int big endian representation of v.
+func btoi(b []byte) uint64 {
+	u := binary.BigEndian.Uint64(b)
+	return u
 }
