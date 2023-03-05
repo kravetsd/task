@@ -2,6 +2,8 @@ package internal
 
 import (
 	"encoding/binary"
+	"fmt"
+	"log"
 
 	"github.com/boltdb/bolt"
 )
@@ -11,9 +13,23 @@ type Task struct {
 	Value string
 }
 
-func (t *Task) doTask(tx *bolt.Tx) error {
+func NewTask(id int) *Task {
+	task := &Task{
+		Id: id,
+	}
+	return task
+}
+
+func (t *Task) DoTask(tx *bolt.Tx) error {
 	bucket := tx.Bucket([]byte(BUCKETNAME))
-	return bucket.Delete(itob(t.Id))
+	err := bucket.Delete(itob(t.Id))
+	// TODO: need to check if task does not exists
+	if err != nil {
+		log.Println("Error while deleting the task: ", err)
+		return err
+	}
+	fmt.Printf("you have completted task \"%v\" \n", t.Id)
+	return err
 }
 
 // itob returns an 8-byte big endian representation of v.
